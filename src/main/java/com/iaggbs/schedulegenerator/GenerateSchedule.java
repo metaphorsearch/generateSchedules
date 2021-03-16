@@ -8,10 +8,15 @@ import java.util.List;
 
 public class GenerateSchedule {
 
-    private List<String> cityList ;
-    public GenerateSchedule(int cityNum) {
-        this.cityList = generateCityList(cityNum);
+    public List<String> cityList ;
+    public List<String> hubCityList ;
+
+    public GenerateSchedule() {
+        this.cityList = generateCityList();
+
     }
+
+
 
     public FlightLeg generateFlight(String recordId, String flight, ZonedDateTime date, int hour){
         // (int) Math.random() * cityList.size()
@@ -34,26 +39,52 @@ public class GenerateSchedule {
         String destinationAirportCode  = this.cityList.get(dIndex);
         String destinationCityCode  = this.cityList.get(dIndex);
         ZonedDateTime destinationLocalDateTime = originLocalDateTime.plusHours(2);
+        String operatedBy = flight.substring(0,1);
 
-        return new FlightLeg(id, recordType, flightNumber, seq, originDate, originAirportCode,
+        return new FlightLeg(id, recordType, flightNumber, operatedBy, seq, originDate, originAirportCode,
                 originCityCode,originLocalDateTime, destinationAirportCode, destinationCityCode,
                 destinationLocalDateTime  );
     }
-    public List<String> generateCityList(int num){
-        String[] chars =  {"A", "B", "C", "D", "W", "X", "Y", "Z", "T"};
-        List cityList = new ArrayList() ;
-        int count = 0 ;
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                for (int k = 0; k < 9; k++) {
+
+    public FlightLeg generateFlight2(String recordId, String originCity, String destinationCity, ZonedDateTime date, int hour){
+
+
+        String id = recordId  ;
+        String recordType = "flight-leg" ;
+        String flightNumber = originCity+"-"+destinationCity+"-"+hour ;
+        String seq = "1" ;
+        ZonedDateTime originDate = date ;
+        String originAirportCode = originCity ;
+        String originCityCode = originCity ;
+        ZonedDateTime originLocalDateTime = date.plusHours(hour) ;
+        String destinationAirportCode  = destinationCity;
+        String destinationCityCode  = destinationCity;
+        ZonedDateTime destinationLocalDateTime = originLocalDateTime.plusHours(2);
+        String operatedBy = flightNumber.substring(0,1);
+
+        FlightLeg flightLeg = new FlightLeg(id, recordType, flightNumber, operatedBy, seq, originDate, originAirportCode,
+                originCityCode,originLocalDateTime, destinationAirportCode, destinationCityCode,
+                destinationLocalDateTime  );
+       // System.out.println(flightLeg.toString());
+
+        return flightLeg ;
+    }
+    public List<String> generateCityList(){
+        String[] chars =  {"A", "B", "C", "D", "E", "F", "G", "H"};
+        this.cityList = new ArrayList() ;
+        this.hubCityList = new ArrayList() ;
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                for (int k = 0; k < 8; k++) {
                     cityList.add(chars[i]+chars[j]+chars[k]) ;
-                    count++ ;
-                    if (count >= num) return cityList;
+                    if(chars[i] == chars[j] && chars[j] == chars[k]) {
+                        hubCityList.add(chars[i]+chars[j]+chars[k]);
+                    }
                 }
             }
         }
 
-        return cityList ;
+        return this.cityList ;
     }
 
 
